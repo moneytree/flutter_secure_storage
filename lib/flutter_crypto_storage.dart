@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
+import 'mobile_crypto_storage.dart'
+    if (dart.library.html) 'web_crypto_storage.dart' as platform;
 
 class FlutterCryptoStorage {
   final IOSExtraArguments iOSExtraArguments;
@@ -26,11 +28,12 @@ class FlutterCryptoStorage {
     IOSExtraArguments iOptions,
   }) async {
     assert(key != null);
-    return _channel.invokeMethod('write', <String, dynamic>{
-      'key': key,
-      'value': value,
-      'options': _selectOptions(iOptions)
-    });
+    await platform.write(
+      key,
+      value: value,
+      iOptions: iOptions ?? iOSExtraArguments,
+    );
+    return;
   }
 
   /// Decrypts and returns the value for the given [key] or null if [key] is not in the storage.
@@ -40,10 +43,7 @@ class FlutterCryptoStorage {
   /// Can throw a [PlatformException].
   Future<String> read(String key, {IOSExtraArguments iOptions}) async {
     assert(key != null);
-    return _channel.invokeMethod('read', <String, dynamic>{
-      'key': key,
-      'options': _selectOptions(iOptions),
-    });
+    return platform.read(key, iOptions: iOSExtraArguments ?? iOptions);
   }
 
   /// Deletes associated value for the given [key].
@@ -51,12 +51,10 @@ class FlutterCryptoStorage {
   /// [key] unique indiefiery; key can't be null.
   /// [iOptions] optional iOS options
   /// Can throw a [PlatformException].
-  Future<void> delete(String key, {IOSExtraArguments iOptions}) {
+  Future<void> delete(String key, {IOSExtraArguments iOptions}) async {
     assert(key != null);
-    return _channel.invokeMethod('delete', <String, dynamic>{
-      'key': key,
-      'options': _selectOptions(iOptions),
-    });
+    await platform.delete(key, iOptions: iOSExtraArguments ?? iOptions);
+    return;
   }
 
   /// Decrypts and returns all keys with associated values.
@@ -64,21 +62,16 @@ class FlutterCryptoStorage {
   /// [iOptions] optional iOS options
   /// Can throw a [PlatformException].
   Future<Map<String, String>> readAll({IOSExtraArguments iOptions}) async {
-    final Map results = await _channel.invokeMethod(
-      'readAll',
-      <String, dynamic>{'options': _selectOptions(iOptions)},
+    return platform.readAll(
+      iOptions: iOSExtraArguments ?? iOptions,
     );
-    return results.cast<String, String>();
   }
 
   /// Deletes all keys with associated values.
   ///
   /// [iOptions] optional iOS options
   /// Can throw a [PlatformException].
-  Future<void> deleteAll({IOSExtraArguments iOptions}) => _channel.invokeMethod(
-        'deleteAll',
-        <String, dynamic>{'options': _selectOptions(iOptions)},
-      );
+  Future<void> deleteAll({IOSExtraArguments iOptions}) => platform.deleteAll();
 
   /// Select correct options based on current platform
   Map<String, String> _selectOptions(IOSExtraArguments options) {
