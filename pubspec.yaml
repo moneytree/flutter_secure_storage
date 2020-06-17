@@ -1,17 +1,23 @@
-name: flutter_secure_storage
-description: Flutter Secure Storage provides API to store data in secure storage. Keychain is used in iOS, KeyStore based solution is used in Android.
-version: 3.3.3
-homepage: https://github.com/mogol/flutter_secure_storage
+name: flutter_crypto_storage
+description: |
+  Flutter Crypto Storage was forked from flutter_secure_storage.
+  Flutter Crypto Storage provides API to encrypt and store data securely on iOS and Android.
+  Keychain is used in iOS, Androidx Crypto is used in Android.
+version: 0.1.0
+homepage: https://github.com/moneytree/flutter_secure_storage
 
 flutter:
   plugin:
-    androidPackage: com.it_nomads.fluttersecurestorage
-    pluginClass: FlutterSecureStoragePlugin
+    androidPackage: jp.moneytree.security.crypto.storage
+    pluginClass: FlutterCryptoStoragePlugin
 
 dependencies:
   meta: "^1.1.2"
   flutter:
     sdk: flutter
 
+dev_dependencies:
+  lint: ^1.2.0
+
 environment:
-    sdk: ">=1.19.0 <3.0.0"
+    sdk: ">=2.0.0 <3.0.0"

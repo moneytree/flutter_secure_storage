@@ -2,13 +2,15 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_crypto_storage/flutter_crypto_storage.dart';
 
 void main() {
-  runApp(MaterialApp(home: ItemsWidget()));
+  runApp(const MaterialApp(home: ItemsWidget()));
 }
 
 class ItemsWidget extends StatefulWidget {
+  const ItemsWidget({Key key}) : super(key: key);
+
   @override
   _ItemsWidgetState createState() => _ItemsWidgetState();
 }
@@ -17,7 +19,7 @@ enum _Actions { deleteAll }
 enum _ItemActions { delete, edit }
 
 class _ItemsWidgetState extends State<ItemsWidget> {
-  final _storage = FlutterSecureStorage();
+  final _storage = FlutterCryptoStorage();
 
   List<_SecItem> _items = [];
 
@@ -28,39 +30,39 @@ class _ItemsWidgetState extends State<ItemsWidget> {
     _readAll();
   }
 
-  Future<Null> _readAll() async {
+  Future<void> _readAll() async {
     final all = await _storage.readAll();
     setState(() {
-      return _items = all.keys
+      _items = all.keys
           .map((key) => _SecItem(key, all[key]))
           .toList(growable: false);
     });
   }
 
-  void _deleteAll() async {
+  Future<void> _deleteAll() async {
     await _storage.deleteAll();
-    _readAll();
+    await _readAll();
   }
 
-  void _addNewItem() async {
+  Future<void> _addNewItem() async {
     final String key = _randomValue();
     final String value = _randomValue();
 
-    await _storage.write(key: key, value: value);
-    _readAll();
+    await _storage.write(key, value: value);
+    await _readAll();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Plugin example app'),
+          title: const Text('Plugin example app'),
           actions: <Widget>[
             IconButton(
-                key: Key('add_random'),
+                key: const Key('add_random'),
                 onPressed: _addNewItem,
-                icon: Icon(Icons.add)),
+                icon: const Icon(Icons.add)),
             PopupMenuButton<_Actions>(
-                key: Key('popup_menu'),
+                key: const Key('popup_menu'),
                 onSelected: (action) {
                   switch (action) {
                     case _Actions.deleteAll:
@@ -70,7 +72,7 @@ class _ItemsWidgetState extends State<ItemsWidget> {
                 },
                 itemBuilder: (BuildContext context) =>
                     <PopupMenuEntry<_Actions>>[
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         key: Key('delete_all'),
                         value: _Actions.deleteAll,
                         child: Text('Delete all'),
@@ -114,10 +116,10 @@ class _ItemsWidgetState extends State<ItemsWidget> {
         ),
       );
 
-  Future<Null> _performAction(_ItemActions action, _SecItem item) async {
+  Future<void> _performAction(_ItemActions action, _SecItem item) async {
     switch (action) {
       case _ItemActions.delete:
-        await _storage.delete(key: item.key);
+        await _storage.delete(item.key);
         _readAll();
 
         break;
@@ -126,7 +128,7 @@ class _ItemsWidgetState extends State<ItemsWidget> {
             context: context,
             builder: (context) => _EditItemWidget(item.value));
         if (result != null) {
-          await _storage.write(key: item.key, value: result);
+          await _storage.write(item.key, value: result);
           _readAll();
         }
         break;
@@ -152,21 +154,21 @@ class _EditItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Edit item'),
+      title: const Text('Edit item'),
       content: TextField(
-        key: Key('title_field'),
+        key: const Key('title_field'),
         controller: _controller,
         autofocus: true,
       ),
       actions: <Widget>[
         FlatButton(
-            key: Key('cancel'),
+            key: const Key('cancel'),
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel')),
+            child: const Text('Cancel')),
         FlatButton(
-            key: Key('save'),
+            key: const Key('save'),
             onPressed: () => Navigator.of(context).pop(_controller.text),
-            child: Text('Save')),
+            child: const Text('Save')),
       ],
     );
   }
