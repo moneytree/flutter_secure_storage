@@ -1,6 +1,6 @@
-# flutter_secure_storage_example
+# flutter_crypto_storage_example
 
-Demonstrates how to use the flutter_secure_storage plugin.
+Demonstrates how to use the flutter_crypto_storage plugin.
 
 ## Integration Tests
 Run the following command

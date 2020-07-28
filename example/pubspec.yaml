@@ -1,5 +1,5 @@
-name: flutter_secure_storage_example
-description: Demonstrates how to use the flutter_secure_storage plugin.
+name: flutter_crypto_storage_example
+description: Demonstrates how to use the flutter_crypto_storage plugin.
 
 dependencies:
   flutter:
@@ -8,11 +8,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_secure_storage:
+  flutter_crypto_storage:
     path: ../
   flutter_driver:
     sdk: flutter
   test: any
+  lint: ^1.2.0
 
 flutter:
   uses-material-design: true
